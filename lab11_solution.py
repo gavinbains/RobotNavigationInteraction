@@ -15,14 +15,14 @@ class Run:
         self.servo = factory.create_servo()
         self.odometry = odometry.Odometry()
         self.pidTheta = pid_controller.PIDController(300, 5, 50, [-10, 10], [-200, 200], is_angle=True)
-        self.map = lab11_map.Map("lab11.png")
+        self.map = lab11_map.Map("configuration_space.png")
         self.rrt = rrt.RRT(self.map)
 
     def run(self):
 
         # find a path
-        self.rrt.build((270,300), 3000, 10)
-        x_goal = self.rrt.nearest_neighbor((40, 120))
+        self.rrt.build((300-50, 300-100), 3000, 10)
+        x_goal = self.rrt.nearest_neighbor((200, 170))
         path = self.rrt.shortest_path(x_goal)
 
         for v in self.rrt.T:
@@ -31,7 +31,7 @@ class Run:
         for idx in range(0, len(path)-1):
             self.map.draw_line((path[idx].state[0], path[idx].state[1]), (path[idx+1].state[0], path[idx+1].state[1]), (0,255,0))
 
-        self.map.save("lab11_rrt.png")
+        self.map.save("finalproject_rrt.png")
 
         # execute the path (essentially waypoint following from lab 6)
         self.create.start()
@@ -42,14 +42,14 @@ class Run:
             create2.Sensor.RightEncoderCounts,
         ])
 
-        self.odometry.x = 2.7
-        self.odometry.y = 0.33
+        self.odometry.x = 1
+        self.odometry.y = 0.5
         self.odometry.theta = math.pi / 2
         base_speed = 100
 
         for p in path:
             goal_x = p.state[0] / 100.0
-            goal_y = 3.35 - p.state[1] / 100.0
+            goal_y = 3 - p.state[1] / 100.0
             print(goal_x, goal_y)
             while True:
                 state = self.create.update()

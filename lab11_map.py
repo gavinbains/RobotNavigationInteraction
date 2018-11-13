@@ -10,6 +10,7 @@ class Map:
         self.draw = ImageDraw.Draw(self.img)
 
     def has_obstacle(self, x, y):
+        print("entered has_obs with (x,y): ", x, y)
         return np.array(self.img.getpixel((x, y))).sum() != 0
 
     def draw_line(self, pos1, pos2, color, width=2):

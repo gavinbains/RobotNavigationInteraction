@@ -2,7 +2,7 @@ from pyCreate2 import create2
 import lab11_map
 import math
 import random
-from rrt import RRT
+from rrt_two import RRT
 import numpy as np
 import odometry
 import pid_controller
@@ -12,10 +12,10 @@ class Run:
     def __init__(self, factory):
         self.create = factory.create_create()
         self.time = factory.create_time_helper()
-        self.map = lab11_map.Map("lab11.png")
+        self.map = lab11_map.Map("configuration_space.png")
         self.T = None
-        self.start = (270, 310)
-        self.end = (40, 120)
+        self.start = (100, 50)
+        self.end = (200, 170)
         self.create = factory.create_create()
         self.time = factory.create_time_helper()
         self.sonar = factory.create_sonar()
@@ -28,16 +28,19 @@ class Run:
         # This is an example on how to check if a certain point in the given map is an obstacle
         # Each pixel corresponds to 1cm
         # print(self.map.has_obstacle(50, 60))
-
-        self.generate_rrt(self.start, 3000, 6.0)
+        print("starting")
+        self.generate_rrt(self.start, 100, 6.0)
+        print("shit")
         self.draw_edges()
-        self.draw_shortest(self.T.print_shortest())
-        self.follow_path()
+        print("fuck")
+        # self.draw_shortest(self.T.print_shortest())
+        # print("oh")
+        # self.follow_path()
 
         # This is an example on how to draw a line
         # self.map.draw_line((0, 0), (self.map.width, self.map.height), (255, 0, 0))
         # self.map.draw_line((0, self.map.height), (self.map.width, 0), (0, 255, 0))
-        self.map.save("lab11_rrt.png")
+        self.map.save("fp_rrt.png")
 
     def draw_edges(self):
         for edge in self.T.edges:
@@ -53,7 +56,9 @@ class Run:
 
     def random_state(self):
         while True:
-            rand = random.random() * 300.0, random.random() * 335.0
+            print("declaring rand in rand_state")
+            rand = random.random() * 300.0, random.random() * 300.0
+            print("checking if obs")
             if not self.map.has_obstacle(rand[0], rand[1]):
                 break
         return rand
@@ -82,17 +87,27 @@ class Run:
         # x_init = starting coords (in lab) [270,310]
         # K = number of iterations = tuning ad hoc [2000]
         # delta_t = step size which is how much you wanna move, tune ad hoc
+        print("beginning generate_rrt")
         self.T = RRT(x_init, self.end)
+        print("initialized, running for loop")
         for k in range(K):
+            print("enter")
             x_rand = self.random_state()
+            print("rand")
             x_near = self.nearest_neighbor(x_rand, self.T.nodes)
+            print("near")
             x_new = self.new_state(x_near, x_rand, delta_t)
+            print("new")
             self.T.add_vertex(x_new)
+            print("added vertex")
             self.T.add_edge(x_near, x_new)
+            print("added edge")
+        print("ended for loop")
         x_near = self.nearest_neighbor(self.end, self.T.nodes)
         x_new = self.new_state(x_near, self.end, delta_t)
         self.T.add_vertex(x_new)
         self.T.add_edge(x_near, x_new)
+        print("finished generation")
 
     def follow_path(self):
         self.create.start()
