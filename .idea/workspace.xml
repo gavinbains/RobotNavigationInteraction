@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+<<<<<<< HEAD
   <component name="ChangeListManager">
     <list default="true" id="04cf43fe-0e07-45e8-80d2-cee7bc1670c1" name="Default Changelist" comment="">
       <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
@@ -239,5 +240,15 @@
         </state>
       </provider>
     </entry>
+=======
+  <component name="ProjectFrameBounds" extendedState="4">
+    <option name="x" value="87" />
+    <option name="y" value="24" />
+    <option name="width" value="802" />
+    <option name="height" value="1056" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+>>>>>>> 6daf78f0156494e33c91ebc8f4d5006f50d0c02c
   </component>
 </project>
