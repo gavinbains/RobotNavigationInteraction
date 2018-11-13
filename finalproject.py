@@ -30,7 +30,7 @@ class Run:
         # TODO identify good PID controller gains
         self.pidTheta = pid_controller.PIDController(200, 0, 100, [-10, 10], [-50, 50], is_angle=True)
         # TODO identify good particle filter parameters
-        self.pf = particle_filter.ParticleFilter(self.particle_map, 1000, 0.06, 0.15, 0.2)
+        self.pf = particle_filter.ParticleFilter(self.particle_map, 1000, 0.10, 0.20, 0.20)
 
         self.joint_angles = np.zeros(7)
 
@@ -67,7 +67,7 @@ class Run:
         old_y = self.odometry.y
         old_theta = self.odometry.theta
         base_speed = 100
-        distance = 0.5
+        distance = 0.25
         goal_x = self.odometry.x + math.cos(self.odometry.theta) * distance
         goal_y = self.odometry.y + math.sin(self.odometry.theta) * distance
         while True:
@@ -112,6 +112,8 @@ class Run:
         self.virtual_create.enable_buttons()
         self.visualize()
 
+        self.localize()
+
         while True:
             b = self.virtual_create.get_last_button()
             if b == self.virtual_create.Button.MoveForward:
@@ -130,3 +132,38 @@ class Run:
                 self.visualize()
 
             self.time.sleep(0.01)
+
+    def check_threshold(self):
+
+        x_coord = []
+        y_coord = []
+
+        for particle in self.pf._particles:
+            x_coord.append(particle.x)
+            y_coord.append(particle.y)
+
+        x_variance = np.var(x_coord, dtype=np.float64)
+        y_variance = np.var(y_coord, dtype=np.float64)
+
+        if x_variance <= 0.15 and y_variance <= 0.15:
+            return True
+        else:
+            return False
+
+    def localize(self):
+
+        found_virtual = False
+
+        while found_virtual is False:
+
+            if self.sonar.get_distance() < 0.5:
+                # Turn Left
+                self.go_to_angle(self.odometry.theta + math.pi / 2)
+            else:
+                # Go Forward
+                self.forward()
+
+            self.pf.measure(self.sonar.get_distance(), 0)
+            self.visualize()
+
+            found_virtual = self.check_threshold()
