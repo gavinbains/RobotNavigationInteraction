@@ -20,12 +20,10 @@ class VirtualCreate:
         self._clientID = client_id
         # query objects
         rc, self._obj = vrep.simxGetObjectHandle(self._clientID, "create_estimate", vrep.simx_opmode_oneshot_wait)
-        print("Return code 1:", rc)
+
         # Use custom GUI
-        rc, self._uiHandle = vrep.simxGetUIHandle(self._clientID, "UI", vrep.simx_opmode_oneshot_wait)
-        print("Return code 2:", rc)
+        _, self._uiHandle = vrep.simxGetUIHandle(self._clientID, "UI", vrep.simx_opmode_oneshot_wait)
         vrep.simxGetUIEventButton(self._clientID, self._uiHandle, vrep.simx_opmode_streaming)
-        print("VirtualCreate uiHandle:", self._uiHandle)
 
     def set_pose(self, position, yaw):
         vrep.simxSetObjectPosition(self._clientID, self._obj, -1, position,

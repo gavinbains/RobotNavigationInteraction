@@ -1,3 +1,4 @@
+globals()
 from pyCreate2 import create2
 import numpy as np
 import math
