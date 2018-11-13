@@ -2,7 +2,7 @@ import pyCreate2
 import math
 import odometry
 import pid_controller
-import lab9_map
+import lab11_map
 import particle_filter
 
 import numpy as np
@@ -23,7 +23,7 @@ class Run:
         self.virtual_create = factory.create_virtual_create()
         # self.virtual_create = factory.create_virtual_create("192.168.1.XXX")
         self.odometry = odometry.Odometry()
-        self.map = lab9_map.Map("lab9_map.json")
+        self.map = lab11_map.Map("lab9_map.json")
 
         # TODO identify good PID controller gains
         self.pidTheta = pid_controller.PIDController(200, 0, 100, [-10, 10], [-50, 50], is_angle=True)
