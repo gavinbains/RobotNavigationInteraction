@@ -21,15 +21,15 @@ class Run:
     def run(self):
 
         # find a path
-        self.rrt.build((300-50, 300-100), 3000, 10)
-        x_goal = self.rrt.nearest_neighbor((200, 170))
+        self.rrt.build((50, 250), 3000, 100)
+        x_goal = self.rrt.nearest_neighbor((150, 50))
         path = self.rrt.shortest_path(x_goal)
 
         for v in self.rrt.T:
             for u in v.neighbors:
-                self.map.draw_line((v.state[0], v.state[1]), (u.state[0], u.state[1]), (0,0,0))
+                self.map.draw_line((v.state[0], v.state[1]), (u.state[0], u.state[1]), (0, 0, 0))
         for idx in range(0, len(path)-1):
-            self.map.draw_line((path[idx].state[0], path[idx].state[1]), (path[idx+1].state[0], path[idx+1].state[1]), (0,255,0))
+            self.map.draw_line((path[idx].state[0], path[idx].state[1]), (path[idx+1].state[0], path[idx+1].state[1]), (0, 255, 0))
 
         self.map.save("finalproject_rrt.png")
 

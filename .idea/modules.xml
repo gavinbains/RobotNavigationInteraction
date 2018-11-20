@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-<<<<<<< HEAD
-      <module fileurl="file://$PROJECT_DIR$/.idea/RobotNavigationInteraction.iml" filepath="$PROJECT_DIR$/.idea/RobotNavigationInteraction.iml" />
-=======
       <module fileurl="file://$PROJECT_DIR$/.idea/finalproject.iml" filepath="$PROJECT_DIR$/.idea/finalproject.iml" />
->>>>>>> 6daf78f0156494e33c91ebc8f4d5006f50d0c02c
     </modules>
   </component>
 </project>
