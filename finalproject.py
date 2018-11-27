@@ -5,7 +5,7 @@ import pid_controller
 import lab9_map
 import lab11_map
 import particle_filter
-
+import lab11
 import numpy as np
 
 
@@ -26,6 +26,8 @@ class Run:
         self.odometry = odometry.Odometry()
         self.particle_map = lab9_map.Map("lab9_map.json")
         self.map = lab11_map.Map("configuration_space.png")
+
+        self.path = lab11.Run(factory)
 
         # TODO identify good PID controller gains
         self.pidTheta = pid_controller.PIDController(200, 0, 100, [-10, 10], [-50, 50], is_angle=True)
@@ -114,24 +116,34 @@ class Run:
 
         self.localize()
 
-        while True:
-            b = self.virtual_create.get_last_button()
-            if b == self.virtual_create.Button.MoveForward:
-                self.forward()
-                self.visualize()
-            elif b == self.virtual_create.Button.TurnLeft:
-                self.go_to_angle(self.odometry.theta + math.pi / 2)
-                self.visualize()
-            elif b == self.virtual_create.Button.TurnRight:
-                self.go_to_angle(self.odometry.theta - math.pi / 2)
-                self.visualize()
-            elif b == self.virtual_create.Button.Sense:
-                distance = self.sonar.get_distance()
-                print(distance)
-                self.pf.measure(distance, 0)
-                self.visualize()
+        x, y, theta = self.pf.get_estimate()
 
-            self.time.sleep(0.01)
+        x = x * 100
+        y = abs(3 - y) * 100
+
+        print("Estimate for x - ", x)
+        print("Estimate for y - ", y)
+
+        self.path.run((x, y))
+
+        # while True:
+        #     b = self.virtual_create.get_last_button()
+        #     if b == self.virtual_create.Button.MoveForward:
+        #         self.forward()
+        #         self.visualize()
+        #     elif b == self.virtual_create.Button.TurnLeft:
+        #         self.go_to_angle(self.odometry.theta + math.pi / 2)
+        #         self.visualize()
+        #     elif b == self.virtual_create.Button.TurnRight:
+        #         self.go_to_angle(self.odometry.theta - math.pi / 2)
+        #         self.visualize()
+        #     elif b == self.virtual_create.Button.Sense:
+        #         distance = self.sonar.get_distance()
+        #         print(distance)
+        #         self.pf.measure(distance, 0)
+        #         self.visualize()
+        #
+        #     self.time.sleep(0.01)
 
     def check_threshold(self):
 
@@ -167,3 +179,4 @@ class Run:
             self.visualize()
 
             found_virtual = self.check_threshold()
+
