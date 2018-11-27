@@ -15,7 +15,7 @@ class Run:
         self.servo = factory.create_servo()
         self.odometry = odometry.Odometry()
         self.pidTheta = pid_controller.PIDController(300, 5, 50, [-10, 10], [-200, 200], is_angle=True)
-        self.map = lab11_map.Map("configuration_space.png")
+        self.map = lab11_map.Map("finalproject_map2_config.png")
         self.rrt = rrt.RRT(self.map)
 
     def run(self):

@@ -63,23 +63,28 @@ class Run:
     def run(self, points):
 
         x = points[0]
-        y = abs(3 - points[1])
+        y = points[1]
 
         print("The values to be computed are", x, " and ", y)
 
         self.start = (x, y)
-        self.generate_rrt(self.start, 3000, 10.0)
+        self.generate_rrt(self.start, 3000, 12.0)
         self.draw_edges()
 
         self.waypoints = self.T.print_shortest()
+        self.smooth_waypoints()
+
+        # After smoothing out
         self.draw_shortest(self.waypoints)
+
+        self.map.save("fp_rrt.png")
 
         self.follow_path()
 
         # This is an example on how to draw a line
         # self.map.draw_line((0, 0), (self.map.width, self.map.height), (255, 0, 0))
         # self.map.draw_line((0, self.map.height), (self.map.width, 0), (0, 255, 0))
-        self.map.save("fp11_rrt.png")
+
 
     def draw_edges(self):
         for edge in self.T.edges:
@@ -118,12 +123,56 @@ class Run:
                     break
                 else:
                     p2 = self.random_state()
+
             return new_point
+
+    def smooth_waypoints(self):
+
+        smoothed_points = []
+
+        for waypoint in self.waypoints:
+
+            add_point = True
+
+            x = waypoint[0]
+            y = waypoint[1]
+
+            # Check Up
+            y_up = y + 15
+
+            if self.map.has_obstacle(x, y_up):
+                add_point = False
+
+            # Check Down
+            y_down = y - 15
+
+            if self.map.has_obstacle(x, y_down):
+                add_point = False
+
+            # Check Right
+            x_right = x + 15
+
+            if self.map.has_obstacle(x_right, y):
+                add_point = False
+
+            # Check Left
+            x_left = x - 15
+
+            if self.map.has_obstacle(x_left, y):
+                add_point = False
+
+            if add_point:
+                smoothed_points.append(waypoint)
+
+        self.waypoints = smoothed_points
+
+        del self.waypoints[-1]
 
     def generate_rrt(self, x_init, K, delta_t):
         # x_init = starting coords (in lab) [270,310]
         # K = number of iterations = tuning ad hoc [2000]
         # delta_t = step size which is how much you wanna move, tune ad hoc
+
         self.T = RRT(x_init, self.end)
         for k in range(K):
             x_rand = self.random_state()
@@ -149,6 +198,7 @@ class Run:
         self.waypoints.reverse()
         self.odometry.x = self.waypoints[0][0]/100
         self.odometry.y = 3 - self.waypoints[0][1]/100
+
         for waypoint in self.waypoints:
             goal_x = waypoint[0] / 100
             goal_y = 3 - waypoint[1] / 100
@@ -158,7 +208,7 @@ class Run:
             while True:
                 state = self.create.update()
                 if state is not None:
-                    if abs(goal_x - self.odometry.x) <= .2 and abs(goal_y - self.odometry.y) <= .2:
+                    if abs(goal_x - self.odometry.x) <= .125 and abs(goal_y - self.odometry.y) <= .125:
                         break
                     self.odometry.update(state.leftEncoderCounts, state.rightEncoderCounts)
                     goal_theta = math.atan2(goal_y - self.odometry.y, goal_x - self.odometry.x)

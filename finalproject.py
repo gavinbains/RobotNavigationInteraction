@@ -126,24 +126,24 @@ class Run:
 
         self.path.run((x, y))
 
-        # while True:
-        #     b = self.virtual_create.get_last_button()
-        #     if b == self.virtual_create.Button.MoveForward:
-        #         self.forward()
-        #         self.visualize()
-        #     elif b == self.virtual_create.Button.TurnLeft:
-        #         self.go_to_angle(self.odometry.theta + math.pi / 2)
-        #         self.visualize()
-        #     elif b == self.virtual_create.Button.TurnRight:
-        #         self.go_to_angle(self.odometry.theta - math.pi / 2)
-        #         self.visualize()
-        #     elif b == self.virtual_create.Button.Sense:
-        #         distance = self.sonar.get_distance()
-        #         print(distance)
-        #         self.pf.measure(distance, 0)
-        #         self.visualize()
-        #
-        #     self.time.sleep(0.01)
+        while True:
+            b = self.virtual_create.get_last_button()
+            if b == self.virtual_create.Button.MoveForward:
+                self.forward()
+                self.visualize()
+            elif b == self.virtual_create.Button.TurnLeft:
+                self.go_to_angle(self.odometry.theta + math.pi / 2)
+                self.visualize()
+            elif b == self.virtual_create.Button.TurnRight:
+                self.go_to_angle(self.odometry.theta - math.pi / 2)
+                self.visualize()
+            elif b == self.virtual_create.Button.Sense:
+                distance = self.sonar.get_distance()
+                print(distance)
+                self.pf.measure(distance, 0)
+                self.visualize()
+
+            self.time.sleep(0.01)
 
     def check_threshold(self):
 
@@ -157,7 +157,7 @@ class Run:
         x_variance = np.var(x_coord, dtype=np.float64)
         y_variance = np.var(y_coord, dtype=np.float64)
 
-        if x_variance <= 0.15 and y_variance <= 0.15:
+        if x_variance <= 0.18 and y_variance <= 0.18:
             return True
         else:
             return False
@@ -168,7 +168,7 @@ class Run:
 
         while found_virtual is False:
 
-            if self.sonar.get_distance() < 0.5:
+            if self.sonar.get_distance() < 0.55:
                 # Turn Left
                 self.go_to_angle(self.odometry.theta + math.pi / 2)
             else:
