@@ -13,7 +13,7 @@ class Run:
         self.create = factory.create_create()
         self.time = factory.create_time_helper()
 
-        self.map = lab11_map.Map("finalproject_map2_config.png")
+        self.map = lab11_map.Map("finalproject_map2.png")
         self.T = None
 
         # self.start = (100, 250)
@@ -216,6 +216,7 @@ class Run:
             print("waypoint:", goal_x, goal_y)
 
             while True:
+
                 state = self.create.update()
                 if state is not None:
                     if abs(goal_x - self.odometry.x) <= .125 and abs(goal_y - self.odometry.y) <= .125:
