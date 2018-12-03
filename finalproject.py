@@ -33,7 +33,6 @@ class Run:
         self.pidTheta = pid_controller.PIDController(200, 0, 100, [-10, 10], [-50, 50], is_angle=True)
         # TODO identify good particle filter parameters
         self.pf = particle_filter.ParticleFilter(self.particle_map, 1000, 0.10, 0.20, 0.20)
-
         self.joint_angles = np.zeros(7)
 
     def sleep(self, time_in_sec):
