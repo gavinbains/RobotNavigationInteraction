@@ -160,7 +160,7 @@ class Run:
         x_variance = np.var(x_coord, dtype=np.float64)
         y_variance = np.var(y_coord, dtype=np.float64)
 
-        if x_variance <= 0.10 and y_variance <= 0.10:
+        if x_variance <= 0.05 and y_variance <= 0.05:
             return True
         else:
             return False
@@ -171,7 +171,7 @@ class Run:
 
         while found_virtual is False:
 
-            if self.sonar.get_distance() < 0.55:
+            if self.sonar.get_distance() < 0.45:
                 # Turn Left
                 self.go_to_angle(self.odometry.theta + math.pi / 2)
             else:
