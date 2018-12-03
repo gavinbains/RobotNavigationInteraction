@@ -24,8 +24,8 @@ class Run:
         self.virtual_create = factory.create_virtual_create()
         # self.virtual_create = factory.create_virtual_create("192.168.1.XXX")
         self.odometry = odometry.Odometry()
-        self.particle_map = lab9_map.Map("lab9_map.json")
-        self.map = lab11_map.Map("configuration_space.png")
+        self.particle_map = lab9_map.Map("finalproject_map2.json")
+        self.map = lab11_map.Map("finalproject_map2_config.png")
 
         self.path = lab11.Run(factory)
 
@@ -68,7 +68,7 @@ class Run:
         old_x = self.odometry.x
         old_y = self.odometry.y
         old_theta = self.odometry.theta
-        base_speed = 100
+        base_speed = 200
         distance = 0.25
         goal_x = self.odometry.x + math.cos(self.odometry.theta) * distance
         goal_y = self.odometry.y + math.sin(self.odometry.theta) * distance
@@ -123,8 +123,11 @@ class Run:
 
         print("Estimate for x - ", x)
         print("Estimate for y - ", y)
+        print("Estimate for theta - ", theta)
 
-        self.path.run((x, y))
+        self.path.run((x, y, theta))
+
+        # self.path.run((180, 268))
 
         while True:
             b = self.virtual_create.get_last_button()
@@ -157,7 +160,7 @@ class Run:
         x_variance = np.var(x_coord, dtype=np.float64)
         y_variance = np.var(y_coord, dtype=np.float64)
 
-        if x_variance <= 0.18 and y_variance <= 0.18:
+        if x_variance <= 0.10 and y_variance <= 0.10:
             return True
         else:
             return False

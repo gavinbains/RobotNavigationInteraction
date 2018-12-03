@@ -13,10 +13,14 @@ class Run:
         self.create = factory.create_create()
         self.time = factory.create_time_helper()
 
-        self.map = lab11_map.Map("configuration_space.png")
+        self.map = lab11_map.Map("finalproject_map2_config.png")
         self.T = None
-        self.start = (100, 250)
-        self.end = (150, 50)
+
+        # self.start = (100, 250)
+
+        self.start = (180, 268)
+
+        self.end = (37, 145)
         self.create = factory.create_create()
         self.time = factory.create_time_helper()
         self.sonar = factory.create_sonar()
@@ -64,6 +68,9 @@ class Run:
 
         x = points[0]
         y = points[1]
+        theta = points[2]
+
+        self.odometry.theta = theta
 
         print("The values to be computed are", x, " and ", y)
 
@@ -128,44 +135,47 @@ class Run:
 
     def smooth_waypoints(self):
 
-        smoothed_points = []
+        # smoothed_points = []
+        #
+        # for waypoint in self.waypoints:
+        #
+        #     add_point = True
+        #
+        #     x = waypoint[0]
+        #     y = waypoint[1]
+        #
+        #     # Check Up
+        #     y_up = y + 1
+        #
+        #     if self.map.has_obstacle(x, y_up):
+        #         add_point = False
+        #
+        #     # Check Down
+        #     y_down = y - 1
+        #
+        #     if self.map.has_obstacle(x, y_down):
+        #         add_point = False
+        #
+        #     # Check Right
+        #     x_right = x + 1
+        #
+        #     if self.map.has_obstacle(x_right, y):
+        #         add_point = False
+        #
+        #     # Check Left
+        #     x_left = x - 1
+        #
+        #     if self.map.has_obstacle(x_left, y):
+        #         add_point = False
+        #
+        #     if add_point:
+        #         smoothed_points.append(waypoint)
+        #
+        # self.waypoints = smoothed_points
 
-        for waypoint in self.waypoints:
-
-            add_point = True
-
-            x = waypoint[0]
-            y = waypoint[1]
-
-            # Check Up
-            y_up = y + 15
-
-            if self.map.has_obstacle(x, y_up):
-                add_point = False
-
-            # Check Down
-            y_down = y - 15
-
-            if self.map.has_obstacle(x, y_down):
-                add_point = False
-
-            # Check Right
-            x_right = x + 15
-
-            if self.map.has_obstacle(x_right, y):
-                add_point = False
-
-            # Check Left
-            x_left = x - 15
-
-            if self.map.has_obstacle(x_left, y):
-                add_point = False
-
-            if add_point:
-                smoothed_points.append(waypoint)
-
-        self.waypoints = smoothed_points
-
+        del self.waypoints[-1]
+        del self.waypoints[-1]
+        del self.waypoints[-1]
         del self.waypoints[-1]
 
     def generate_rrt(self, x_init, K, delta_t):
