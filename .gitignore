@@ -1,8 +1,8 @@
 
 # Ignore this file
 
-pyCreate2/
+/pyCreate2/*
 
 # Ignore the creation files
 
-#.ttt
+*.ttt
