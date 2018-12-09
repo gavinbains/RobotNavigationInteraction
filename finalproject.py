@@ -15,14 +15,14 @@ class Run:
 
         Args:
             factory (factory.FactoryCreate)
-        """XXX
+        """
         self.create = factory.create_create()
         self.time = factory.create_time_helper()
         self.servo = factory.create_servo()
         self.sonar = factory.create_sonar()
         # self.arm = factory.create_kuka_lbr4p()
         # self.virtual_create = factory.create_virtual_create()
-        self.virtual_create = factory.create_virtual_create("192.168.1.138")
+        self.virtual_create = factory.create_virtual_create("192.168.1.221")
         self.odometry = odometry.Odometry()
         self.particle_map = lab9_map.Map("finalproject_map2.json")
         self.map = lab11_map.Map("finalproject_map2.png")
@@ -32,7 +32,7 @@ class Run:
         # TODO identify good PID controller gains
         self.pidTheta = pid_controller.PIDController(200, 0, 100, [-10, 10], [-50, 50], is_angle=True)
         # TODO identify good particle filter parameters
-        self.pf = particle_filter.ParticleFilter(self.particle_map, 1000, 0.10, 0.20, 0.20)
+        self.pf = particle_filter.ParticleFilter(self.particle_map, 1000, 0.10, 0.20, 0.1)
         self.joint_angles = np.zeros(7)
 
     def sleep(self, time_in_sec):
@@ -175,9 +175,29 @@ class Run:
                 # Turn Left
                 self.go_to_angle(self.odometry.theta + math.pi / 2)
             else:
+                self.servo.go_to(-90)
+                self.sleep(3)
+                self.servo.go_to(0)
+                self.sleep(3)
+                self.servo.go_to(90)
+                self.sleep(3)
+                self.servo.go_to(180)
+                self.sleep(3)
                 # Go Forward
                 self.forward()
+                self.pf.measure(self.sonar.get_distance(), 0)
+                self.visualize()
+                # Check left
+                self.servo.go_to(0)
+                self.pf.measure(self.sonar.get_distance(), 0)
+                self.visualize()
+                # Check right
+                self.servo.go_to(180)
+                self.pf.measure(self.sonar.get_distance(), 0)
+                self.visualize()
 
+
+            self.servo.go_to(0)
             self.pf.measure(self.sonar.get_distance(), 0)
             self.visualize()
 

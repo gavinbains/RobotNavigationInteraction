@@ -26,8 +26,8 @@ class Run:
         self.sonar = factory.create_sonar()
         self.servo = factory.create_servo()
         self.odometry = odometry.Odometry()
-        self.pidTheta = pid_controller.PIDController(300, 5, 50, [-10, 10], [-200, 200], is_angle=True)
-        self.pidDistance = pid_controller.PIDController(1000, 0, 50, [0, 0], [-200, 200], is_angle=False)
+        self.pidTheta = pid_controller.PIDController(150, 5, 50, [-10, 10], [-200, 200], is_angle=True)
+        self.pidDistance = pid_controller.PIDController(500, 0, 50, [0, 0], [-200, 200], is_angle=False)
 
         self.waypoints = []
         # self.waypoints = [
@@ -66,23 +66,24 @@ class Run:
 
     def run(self, points):
 
-        x = points[0]
-        y = points[1]
-        theta = points[2]
-
-        self.odometry.theta = theta
-
-        print("The values to be computed are", x, " and ", y)
-
-        self.start = (x, y)
+        self.odometry.x = points[0]
+        self.odometry.y = points[1]
+        self.odometry.theta = points[2]
+        self.start = (points[0], points[1])
+        print("Generating RRT")
         self.generate_rrt(self.start, 3000, 12.0)
         self.draw_edges()
-
+        print("Drawing edges")
         self.waypoints = self.T.print_shortest()
         self.smooth_waypoints()
-
         # After smoothing out
+        # calculate target theta
+        print("Going to goal theta")
+        tTheta = atan2((points[1] - self.waypoints[0][1])/(points[0] - self.waypoints[0][0]))
         self.draw_shortest(self.waypoints)
+        self.pidTheta.update(points[2], tTheta, self.time.time())
+
+        print("The values to be computed are", x, " and ", y)
 
         self.map.save("fp_rrt.png")
 
@@ -219,7 +220,7 @@ class Run:
 
                 state = self.create.update()
                 if state is not None:
-                    if abs(goal_x - self.odometry.x) <= .125 and abs(goal_y - self.odometry.y) <= .125:
+                    if abs(goal_x - self.odometry.x) <= .3 and abs(goal_y - self.odometry.y) <= .3:
                         break
                     self.odometry.update(state.leftEncoderCounts, state.rightEncoderCounts)
                     goal_theta = math.atan2(goal_y - self.odometry.y, goal_x - self.odometry.x)
