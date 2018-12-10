@@ -20,12 +20,12 @@ class Run:
         self.time = factory.create_time_helper()
         self.servo = factory.create_servo()
         self.sonar = factory.create_sonar()
-        # self.arm = factory.create_kuka_lbr4p()
+        self.arm = factory.create_kuka_lbr4p()
         # self.virtual_create = factory.create_virtual_create()
-        self.virtual_create = factory.create_virtual_create("192.168.1.221")
-        self.odometry = odometry.Odometry()
-        self.particle_map = lab9_map.Map("finalproject_map2.json")
-        self.map = lab11_map.Map("finalproject_map2.png")
+        # self.virtual_create = factory.create_virtual_create("192.168.1.221")
+        # self.odometry = odometry.Odometry()
+        # self.particle_map = lab9_map.Map("finalproject_map2.json")
+        # self.map = lab11_map.Map("finalproject_map2.png")
 
         self.path = lab11.Run(factory)
 
