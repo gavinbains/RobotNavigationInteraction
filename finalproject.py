@@ -12,7 +12,6 @@ import numpy as np
 class Run:
     def __init__(self, factory):
         """Constructor.
-
         Args:
             factory (factory.FactoryCreate)
         """
@@ -131,23 +130,24 @@ class Run:
         # self.path.run((180, 268, 0))
 
         while True:
-            b = self.virtual_create.get_last_button()
-            if b == self.virtual_create.Button.MoveForward:
-                self.forward()
-                self.visualize()
-            elif b == self.virtual_create.Button.TurnLeft:
-                self.go_to_angle(self.odometry.theta + math.pi / 2)
-                self.visualize()
-            elif b == self.virtual_create.Button.TurnRight:
-                self.go_to_angle(self.odometry.theta - math.pi / 2)
-                self.visualize()
-            elif b == self.virtual_create.Button.Sense:
-                distance = self.sonar.get_distance()
-                print(distance)
-                self.pf.measure(distance, 0)
-                self.visualize()
+            self.time.sleep(.01)
+            # b = self.virtual_create.get_last_button()
+            # if b == self.virtual_create.Button.MoveForward:
+            #     self.forward()
+            #     self.visualize()
+            # elif b == self.virtual_create.Button.TurnLeft:
+            #     self.go_to_angle(self.odometry.theta + math.pi / 2)
+            #     self.visualize()
+            # elif b == self.virtual_create.Button.TurnRight:
+            #     self.go_to_angle(self.odometry.theta - math.pi / 2)
+            #     self.visualize()
+            # elif b == self.virtual_create.Button.Sense:
+            #     distance = self.sonar.get_distance()
+            #     print(distance)
+            #     self.pf.measure(distance, 0)
+            #     self.visualize()
 
-            self.time.sleep(0.01)
+            # self.time.sleep(0.01)
 
     def check_threshold(self):
 
@@ -172,13 +172,32 @@ class Run:
     def localize(self):
 
         found_virtual = False
+        forward_count = -1
 
         while found_virtual is False:
 
             if self.sonar.get_distance() < 0.50:
                 # Turn Left
                 self.go_to_angle(self.odometry.theta + math.pi / 2)
+                forward_count = -1
             else:
+                if (forward_count == 3):
+                    # get current angle
+                    oTheta = self.odometry.theta
+                    # go to +90
+                    self.go_to_angle(oTheta + 90)
+                    self.pf.measure(self.sonar.get_distance(), 0)
+                    self.visualize()
+                    # go to -90
+                    self.go_to_angle(oTheta - 90)
+                    self.pf.measure(self.sonar.get_distance(), 0)
+                    self.visualize()
+                    # go back to original position
+                    self.go_to_angle(oTheta)
+                    self.pf.measure(self.sonar.get_distance(), 0)
+                    self.visualize()
+                    forward_count = -1
+                forward_count += 1
                 self.forward()
 
             self.servo.go_to(0)

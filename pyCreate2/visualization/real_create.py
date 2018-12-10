@@ -2,7 +2,7 @@
 Module to control a virtual create
 """
 
-from vrep import vrep as vrep
+from ..vrep import vrep as vrep
 from enum import Enum
 
 

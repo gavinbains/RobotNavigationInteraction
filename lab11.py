@@ -191,10 +191,13 @@ class Run:
 
                     if abs(0.50 - absolute_truth[0]) <= .20 and abs(1.50 - absolute_truth[1]) <= .20:
                         print("Trigger abs position!")
-
+                        self.create.drive_direct(0,0)
+                        print("Movement should be stopped")
                         return
 
                     if abs(goal_x - self.odometry.x) <= .15 and abs(goal_y - self.odometry.y) <= .15:
+                        self.create.drive_direct(0,0)
+                        print("Movement should be stopped")
                         break
 
                     self.odometry.update(state.leftEncoderCounts, state.rightEncoderCounts)
