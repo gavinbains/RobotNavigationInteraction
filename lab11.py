@@ -13,14 +13,12 @@ class Run:
         self.create = factory.create_create()
         self.time = factory.create_time_helper()
 
-        self.map = lab11_map.Map("finalproject_map2.png")
+        self.map = lab11_map.Map("finalproject_map2_config.png")
         self.T = None
-
-        # self.start = (100, 250)
 
         self.start = (180, 268)
 
-        self.end = (37, 145)
+        self.end = (50, 150)
         self.create = factory.create_create()
         self.time = factory.create_time_helper()
         self.sonar = factory.create_sonar()
@@ -30,39 +28,6 @@ class Run:
         self.pidDistance = pid_controller.PIDController(500, 0, 50, [0, 0], [-200, 200], is_angle=False)
 
         self.waypoints = []
-        # self.waypoints = [
-        #     [150, 50],
-        #     [148.1839902399901, 48.77721068889793],
-        #     [147.7456873472306, 49.35175670074556],
-        #     [143.78340214947022, 53.532906658401366],
-        #     [152.38281511349754, 54.56386388866407],
-        #     [155.91401384634196, 61.194162234571095],
-        #     [155.3152360746851, 62.172473664390296],
-        #     [160.16587321713737, 70.91726178716733],
-        #     [152.8941391535281, 77.78179991497642],
-        #     [156.18607684046853, 87.22442382283705],
-        #     [156.6847270858388, 97.21198348137187],
-        #     [160.61438360276432, 106.40751498634671],
-        #     [155.3610205782822, 113.87879448081841],
-        #     [146.79872758494318, 119.04475409121197],
-        #     [138.24978803008443, 124.23278189446935],
-        #     [133.82168999117832, 133.19893757892163],
-        #     [140.28720242575596, 140.82764316757306],
-        #     [133.80538205759078, 148.44249738251628],
-        #     [134.08244016092655, 158.43865858606716],
-        #     [126.78615495208547, 165.27709569927123],
-        #     [123.55470953772019, 174.74059191018492],
-        #     [130.3842200285745, 182.04523334254222],
-        #     [125.53886739510159, 190.79295063663085],
-        #     [124.4628990102248, 200.73489672553848],
-        #     [122.27403057667186, 210.49239922262223],
-        #     [117.92059958103229, 219.4950454206134],
-        #     [111.3921763086509, 227.06998367624487],
-        #     [104.0249832511163, 233.83197054794272],
-        #     [94.4635437045154, 230.9029990908103],
-        #     [96.19597383721772, 240.75179017577628],
-        #     [100, 250]
-        # ]
 
     def run(self, points):
 
@@ -76,23 +41,18 @@ class Run:
         print("Drawing edges")
         self.waypoints = self.T.print_shortest()
         self.smooth_waypoints()
-        # After smoothing out
-        # calculate target theta
+
+        # After smoothing out, calculate target theta
         print("Going to goal theta")
-        tTheta = atan2((points[1] - self.waypoints[0][1])/(points[0] - self.waypoints[0][0]))
+        tTheta = math.atan2((points[1] - self.waypoints[0][1]), (points[0] - self.waypoints[0][0]))
         self.draw_shortest(self.waypoints)
         self.pidTheta.update(points[2], tTheta, self.time.time())
 
-        print("The values to be computed are", x, " and ", y)
-
         self.map.save("fp_rrt.png")
 
+        print("waypoints: ", self.waypoints)
+
         self.follow_path()
-
-        # This is an example on how to draw a line
-        # self.map.draw_line((0, 0), (self.map.width, self.map.height), (255, 0, 0))
-        # self.map.draw_line((0, self.map.height), (self.map.width, 0), (0, 255, 0))
-
 
     def draw_edges(self):
         for edge in self.T.edges:
@@ -138,43 +98,47 @@ class Run:
 
         # smoothed_points = []
         #
+        # add_point = True
+        #
         # for waypoint in self.waypoints:
-        #
-        #     add_point = True
-        #
-        #     x = waypoint[0]
-        #     y = waypoint[1]
-        #
-        #     # Check Up
-        #     y_up = y + 1
-        #
-        #     if self.map.has_obstacle(x, y_up):
-        #         add_point = False
-        #
-        #     # Check Down
-        #     y_down = y - 1
-        #
-        #     if self.map.has_obstacle(x, y_down):
-        #         add_point = False
-        #
-        #     # Check Right
-        #     x_right = x + 1
-        #
-        #     if self.map.has_obstacle(x_right, y):
-        #         add_point = False
-        #
-        #     # Check Left
-        #     x_left = x - 1
-        #
-        #     if self.map.has_obstacle(x_left, y):
-        #         add_point = False
-        #
-        #     if add_point:
-        #         smoothed_points.append(waypoint)
-        #
+
+            # add_point = True
+            #
+            # x = waypoint[0] / 100
+            # y = 3 - waypoint[1]/100
+            #
+            # # Check Up
+            # y_up = y + 0.2
+            #
+            # if self.map.has_obstacle(x, y_up):
+            #     add_point = False
+            #
+            # # Check Down
+            # y_down = y - 0.2
+            #
+            # if self.map.has_obstacle(x, y_down):
+            #     add_point = False
+            #
+            # # Check Right
+            # x_right = x + 0.2
+            #
+            # if self.map.has_obstacle(x_right, y):
+            #     add_point = False
+            #
+            # # Check Left
+            # x_left = x - 0.2
+            #
+            # if self.map.has_obstacle(x_left, y):
+            #     add_point = False
+            #
+            # if add_point:
+            #     smoothed_points.append(waypoint)
+            #     add_point = False
+            # else:
+            #     add_point = True
+
         # self.waypoints = smoothed_points
 
-        del self.waypoints[-1]
         del self.waypoints[-1]
         del self.waypoints[-1]
         del self.waypoints[-1]
@@ -220,8 +184,22 @@ class Run:
 
                 state = self.create.update()
                 if state is not None:
-                    if abs(goal_x - self.odometry.x) <= .3 and abs(goal_y - self.odometry.y) <= .3:
+
+                    absolute_truth = self.create.sim_get_position()
+
+                    print("Absolute position - ", absolute_truth)
+
+                    if abs(0.50 - absolute_truth[0]) <= .20 and abs(1.50 - absolute_truth[1]) <= .20:
+                        print("Trigger abs position!")
+                        self.create.drive_direct(0,0)
+                        print("Movement should be stopped")
+                        return
+
+                    if abs(goal_x - self.odometry.x) <= .15 and abs(goal_y - self.odometry.y) <= .15:
+                        self.create.drive_direct(0,0)
+                        print("Movement should be stopped")
                         break
+
                     self.odometry.update(state.leftEncoderCounts, state.rightEncoderCounts)
                     goal_theta = math.atan2(goal_y - self.odometry.y, goal_x - self.odometry.x)
                     print("[{},{},{}]".format(self.odometry.x, self.odometry.y, math.degrees(self.odometry.theta)))
