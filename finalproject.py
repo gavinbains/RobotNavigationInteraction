@@ -20,19 +20,19 @@ class Run:
         self.time = factory.create_time_helper()
         self.servo = factory.create_servo()
         self.sonar = factory.create_sonar()
-        # self.arm = factory.create_kuka_lbr4p()
-        # self.virtual_create = factory.create_virtual_create()
-        self.virtual_create = factory.create_virtual_create("192.168.1.221")
+        self.arm = factory.create_kuka_lbr4p()
+        self.virtual_create = factory.create_virtual_create()
+        # self.virtual_create = factory.create_virtual_create("192.168.1.221")
         self.odometry = odometry.Odometry()
         self.particle_map = lab9_map.Map("finalproject_map2.json")
-        self.map = lab11_map.Map("finalproject_map2.png")
+        self.map = lab11_map.Map("finalproject_map2_config.png")
 
         self.path = lab11.Run(factory)
 
         # TODO identify good PID controller gains
         self.pidTheta = pid_controller.PIDController(200, 0, 100, [-10, 10], [-50, 50], is_angle=True)
         # TODO identify good particle filter parameters
-        self.pf = particle_filter.ParticleFilter(self.particle_map, 1000, 0.10, 0.20, 0.1)
+        self.pf = particle_filter.ParticleFilter(self.particle_map, 1200, 0.10, 0.20, 0.1)
         self.joint_angles = np.zeros(7)
 
     def sleep(self, time_in_sec):
@@ -125,9 +125,10 @@ class Run:
         print("Estimate for theta - ", theta)
 
         print("LOCALIZED")
-        # self.path.run((x, y, theta))
 
-        # self.path.run((180, 268))
+        self.path.run((x, y, theta))
+
+        # self.path.run((180, 268, 0))
 
         while True:
             b = self.virtual_create.get_last_button()
@@ -152,15 +153,18 @@ class Run:
 
         x_coord = []
         y_coord = []
+        theta_coord = []
 
         for particle in self.pf._particles:
             x_coord.append(particle.x)
             y_coord.append(particle.y)
+            theta_coord.append(particle.theta)
 
         x_variance = np.var(x_coord, dtype=np.float64)
         y_variance = np.var(y_coord, dtype=np.float64)
+        theta_coord = np.var(y_coord, dtype=np.float64)
 
-        if x_variance <= 0.05 and y_variance <= 0.05:
+        if x_variance <= 0.05 and y_variance <= 0.05 and theta_coord <= 0.05:
             return True
         else:
             return False
@@ -171,31 +175,11 @@ class Run:
 
         while found_virtual is False:
 
-            if self.sonar.get_distance() < 0.45:
+            if self.sonar.get_distance() < 0.50:
                 # Turn Left
                 self.go_to_angle(self.odometry.theta + math.pi / 2)
             else:
-                self.servo.go_to(-90)
-                self.sleep(3)
-                self.servo.go_to(0)
-                self.sleep(3)
-                self.servo.go_to(90)
-                self.sleep(3)
-                self.servo.go_to(180)
-                self.sleep(3)
-                # Go Forward
                 self.forward()
-                self.pf.measure(self.sonar.get_distance(), 0)
-                self.visualize()
-                # Check left
-                self.servo.go_to(0)
-                self.pf.measure(self.sonar.get_distance(), 0)
-                self.visualize()
-                # Check right
-                self.servo.go_to(180)
-                self.pf.measure(self.sonar.get_distance(), 0)
-                self.visualize()
-
 
             self.servo.go_to(0)
             self.pf.measure(self.sonar.get_distance(), 0)
